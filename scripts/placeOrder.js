@@ -1,52 +1,56 @@
 require('dotenv').config();
 const { ethers } = require('ethers');
 
-// Set up provider and signer
+// Setup provider and signer
 const provider = new ethers.providers.JsonRpcProvider(
   `https://sepolia.infura.io/v3/${process.env.INFURA_KEY}`
 );
 const signer = new ethers.Wallet(process.env.PRIVATE_KEY, provider);
 
-// Contract addresses
+// Smart contract ABI
+const abi = [
+  "function placeOrder(uint256 ethAmount, uint256 usdcAmount) public",
+  "function approve(address spender, uint256 amount) external returns (bool)"
+];
+
+// Smart contract address
+const contractAddress = process.env.CONTRACT_ADDRESS;
+
+// USDC token contract address
 const usdcTokenAddress = process.env.USDC_TOKEN_ADDRESS;
-const limitOrderContractAddress = process.env.CONTRACT_ADDRESS;
 
-// ABI for the USDC token and LimitOrder contract
-const usdcAbi = [
-  'function approve(address spender, uint256 amount) external returns (bool)',
-];
+// Order details
+const ethAmount = ethers.utils.parseEther("0.31", 6); // Amount of ETH in wei
+const usdcAmount = ethers.utils.parseUnits("1", 6); // Amount of USDC in smallest units
 
-const limitOrderAbi = [
-  'function placeOrder(uint256 usdcAmount, uint256 minSepoliaAmount) external',
-  'event OrderPlaced(uint256 orderId, address indexed creator, uint256 usdcAmount, uint256 minSepoliaAmount)',
-];
+// Example BigNumber values
+const ethAmountHex = ethers.BigNumber.from(ethAmount);
+const usdcAmountHex = ethers.BigNumber.from(usdcAmount);
 
-// Create contract instances
-const usdcToken = new ethers.Contract(usdcTokenAddress, usdcAbi, signer);
-const limitOrderContract = new ethers.Contract(limitOrderContractAddress, limitOrderAbi, signer);
+//Convert to more readable formats
+const ethAmountInEth = ethers.utils.formatEther(ethAmountHex); // Convert wei to ETH
+const usdcAmountInUsdc = ethers.utils.formatUnits(usdcAmountHex, 6); // Convert smallest units to USDC
 
-async function main() {
-  const usdcAmount = ethers.utils.parseUnits('1', 6); // 1 USDC, assuming 6 decimals
-  const minSepoliaAmount = ethers.utils.parseUnits('0.00003', 18); // Adjust as needed based on your requirements
+console.log('ethAmount (in ETH):', ethAmountInEth);
+console.log('usdcAmount (in USDC):', usdcAmountInUsdc);
 
-  // Approve the LimitOrder contract to spend 1 USDC
-  console.log('Approving USDC transfer...');
-  const approvalTx = await usdcToken.approve(limitOrderContractAddress, usdcAmount, 
-    {
-        gasLimit: 300000 // Adjust this value as needed
-      }
-  );
-  await approvalTx.wait();
-  console.log('USDC transfer approved.');
+
+async function placeLimitOrder() {
+  // Create contract instance
+  const limitOrderContract = new ethers.Contract(contractAddress, abi, signer);
+
+  // Create USDC contract instance
+  const usdcContract = new ethers.Contract(usdcTokenAddress, abi, signer);
+
+  // Approve the limit order contract to spend USDC on behalf of the user
+  const approveTx = await usdcContract.approve(contractAddress, usdcAmount);
+  await approveTx.wait();
+  console.log('USDC approval transaction:', approveTx.hash);
 
   // Place the limit order
-  console.log('Placing order...');
-  const placeOrderTx = await limitOrderContract.placeOrder(usdcAmount, minSepoliaAmount);
-  const placeOrderReceipt = await placeOrderTx.wait();
-
-  // Get the order ID from the event logs
-  const orderId = placeOrderReceipt.events.find(event => event.event === 'OrderPlaced').args.orderId;
-  console.log(`Order placed with ID: ${orderId}`);
+  const placeOrderTx = await limitOrderContract.placeOrder(ethAmount, usdcAmount);
+  await placeOrderTx.wait();
+  console.log('Place order transaction:', placeOrderTx.hash);
 }
 
-main().catch(console.error);
+placeLimitOrder().catch(console.error);
