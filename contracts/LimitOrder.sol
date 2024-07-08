@@ -48,7 +48,7 @@ contract LimitOrder {
         emit OrderPlaced(orders.length - 1, msg.sender, usdcAmount, minSepoliaAmount);
 
         // Check if the order can be fulfilled immediately
-        checkAndFulfillOrder(orders.length - 1);
+        // checkAndFulfillOrder(orders.length - 1);
     }
 
     function fulfillOrder(uint256 orderId) external payable {
