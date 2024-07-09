@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
+import "@chainlink/contracts/src/v0.8/shared/interfaces/AggregatorV3Interface.sol";
+
 interface IERC20 {
     function transferFrom(address sender, address recipient, uint256 amount) external returns (bool);
     function approve(address spender, uint256 amount) external returns (bool);
@@ -15,11 +17,15 @@ contract LimitOrder {
         uint256 usdcAmount;
     }
 
+     // Chainlink Price Feed
+    AggregatorV3Interface internal priceFeed;
+
     IERC20 public usdcToken;
     Order[] public orders;
 
-    constructor(address _usdcToken) {
+    constructor(address _usdcToken, address _priceFeed) {
         usdcToken = IERC20(_usdcToken);
+        priceFeed = AggregatorV3Interface(_priceFeed);
     }
 
     function placeOrder(uint256 ethAmount, uint256 usdcAmount) public {
@@ -57,4 +63,16 @@ contract LimitOrder {
         Order storage order = orders[orderIndex];
         return (order.user, order.ethAmount, order.usdcAmount);
     }
+
+      function getChainlinkPrice() public view returns (uint256) {
+        (
+            /*uint80 roundID*/,
+            int price,
+            /*uint startedAt*/,
+            /*uint timeStamp*/,
+            /*uint80 answeredInRound*/
+        ) = priceFeed.latestRoundData();
+        return uint256(price);
+    }
+
 }
