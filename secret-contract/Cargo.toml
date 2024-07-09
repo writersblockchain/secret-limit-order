@@ -1,5 +1,5 @@
 [package]
-name = "confdential_limit_orders"
+name = "confidential_limit_orders"
 version = "0.1.0"
 authors = ["seanrad"]
 edition = "2021"
