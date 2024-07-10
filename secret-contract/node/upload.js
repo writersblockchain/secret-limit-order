@@ -99,7 +99,7 @@ let instantiate_contract = async () => {
 
   console.log("contract address: ", contractAddress)
 
-  console.log(tx)
+  // console.log(tx)
 }
 
 // Chain the execution using promises

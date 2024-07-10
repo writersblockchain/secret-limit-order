@@ -1,6 +1,6 @@
 use crate::{
     msg::{
-        ExecuteMsg, GatewayMsg, InstantiateMsg, QueryMsg, ResponseRetrieveLimitOrderMsg, 
+        ExecuteMsg, GatewayMsg, InstantiateMsg, QueryMsg, ResponseRetrieveLimitOrderMsg, ResponseStoreLimitOrderMsg, 
     },
     state::{Input, LimitOrder, State, CONFIG, STORED_LIMIT_ORDER, },
 };
@@ -46,7 +46,7 @@ pub fn execute(deps: DepsMut, env: Env, info: MessageInfo, msg: ExecuteMsg) -> S
 #[entry_point]
 pub fn query(deps: Deps, _env: Env, msg: QueryMsg) -> StdResult<Binary> {
     let response = match msg {
-        QueryMsg::RetrieveLimitOrder {user} => try_limit_order_query(deps, user),
+        QueryMsg::RetrieveLimitOrder {} => try_limit_order_query(deps),
     };
     pad_query_result(response, BLOCK_SIZE)
 }
@@ -101,10 +101,17 @@ fn try_create_limit_order(
     };
 
     STORED_LIMIT_ORDER
-        .add_suffix(user.as_bytes())
+        // .add_suffix(user.as_bytes())
         .insert(deps.storage, &true, &limit_order)?;
 
-    let result = base64::encode(&serde_json_wasm::to_string(&limit_order).unwrap());
+        let data = ResponseStoreLimitOrderMsg {
+            message: "Confidential limit order stored successfully".to_string(),
+        };
+    
+        let json_string =
+            serde_json_wasm::to_string(&data).map_err(|err| StdError::generic_err(err.to_string()))?;
+    
+        let result = base64::encode(json_string);
 
     let callback_msg = GatewayMsg::Output {
         outputs: PostExecutionMsg {
@@ -121,12 +128,12 @@ fn try_create_limit_order(
 
     Ok(Response::new()
         .add_message(callback_msg)
-        .add_attribute("status", "provided RNG complete"))
+        .add_attribute("status", "Limit order stored successfully"))
 }
 
-fn try_limit_order_query(deps: Deps, wallet: String) -> StdResult<Binary> {
+fn try_limit_order_query(deps: Deps) -> StdResult<Binary> {
     let value = STORED_LIMIT_ORDER
-        .add_suffix(wallet.as_bytes())
+        // .add_suffix(user.as_bytes())
         .get(deps.storage, &true)
         .ok_or_else(|| StdError::generic_err("Value not found"))?;
 

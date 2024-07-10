@@ -9,9 +9,9 @@ let query = async () => {
   })
 
   const query_tx = await secretjs.query.compute.queryContract({
-    contract_address: "secret1tg9nldf4ukuz9fk9jna7l3k2p4efp5hl0j8cw0",
-    code_hash: "83c4b20f99efdc942c76ca329eff483ad8cb19c03498dcf3887a751a37246bcf",
-    query: { retrieve_limit_order: {user: "0x4B808ec5A5d53871e0b7bf53bC2A4Ee89dd1ddB1"} },
+    contract_address: "secret1r6089slee2hnnt0pk460xww92xy8csdv5zcgfg",
+    code_hash: "76eb12576011324034f09dfa279018cf4c4f26bf993565cca5f97215723a349e",
+    query: { retrieve_limit_order: {} },
   })
   console.log(query_tx)
 }

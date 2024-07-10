@@ -26,6 +26,13 @@ pub struct LimitOrderStoreMsg {
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
+pub struct ResponseStoreLimitOrderMsg {
+    // response message
+    pub message: String,
+}
+
+
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
 pub struct ResponseRetrieveLimitOrderMsg {
     pub user: String, 
     pub eth_amount: String, 
@@ -35,7 +42,7 @@ pub struct ResponseRetrieveLimitOrderMsg {
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
 #[serde(rename_all = "snake_case")]
 pub enum QueryMsg {
-    RetrieveLimitOrder {user: String},
+    RetrieveLimitOrder {},
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]

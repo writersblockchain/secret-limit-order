@@ -20,7 +20,7 @@ import {
 import secretpath_abi from "../config/abi.js";
 import Confetti from 'react-confetti';
 
-export default function CreateNFT() {
+export default function CreateLimitOrder() {
   const [usdcAmount, setUsdcAmount] = useState("");
   const [ethAmount, setEthAmount] = useState("");
   const [transactionHash, setTransactionHash] = useState('');
@@ -29,14 +29,14 @@ export default function CreateNFT() {
   const [confetti, setConfetti] = useState(false);
   const [buttonDisabled, setButtonDisabled] = useState(false); 
 
-  const CONTRACT_ADDRESS = "";
+  // const CONTRACT_ADDRESS = "";
 
-  const encrypt = async (e) => {
+  const encrypt = async (e, ethAmount, usdcAmount) => {
     e.preventDefault();
 
     const iface = new ethers.utils.Interface(secretpath_abi);
-    const routing_contract = 'secret1tg9nldf4ukuz9fk9jna7l3k2p4efp5hl0j8cw0';
-    const routing_code_hash = "83c4b20f99efdc942c76ca329eff483ad8cb19c03498dcf3887a751a37246bcf";
+    const routing_contract = 'secret1r6089slee2hnnt0pk460xww92xy8csdv5zcgfg';
+    const routing_code_hash = "76eb12576011324034f09dfa279018cf4c4f26bf993565cca5f97215723a349e";
 
     const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
 
@@ -145,7 +145,7 @@ export default function CreateNFT() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    encrypt(e);
+    encrypt(e, ethAmount, usdcAmount);
   };
 
   const handleCloseModal = () => {
@@ -157,7 +157,7 @@ export default function CreateNFT() {
     <div className="flex flex-col full-height justify-start items-center px-6 lg:px-8 ">
       <div className="mt-8">
         <form onSubmit={handleSubmit} className="space-y-4" style={{ width: '360px' }}>
-          <div className="text-black text-lg font-bold mb-4">Create NFT</div>
+          <div className="text-black text-lg font-bold mb-4">Create Limit Order</div>
           <div className="border-4 rounded-lg p-4">
             <div>
               <label className="block text-sm font-medium leading-6 text-black w-full">
