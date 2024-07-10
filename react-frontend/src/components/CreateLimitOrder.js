@@ -22,14 +22,14 @@ import secretpath_abi from "../config/abi.js";
 
 export default function CreateLimitOrder() {
   const [usdcAmount, setUsdcAmount] = useState("");
-  const [ethAmount, setEthAmount] = useState("");
+  const [targetPrice, setTargetPrice] = useState("");
 
   const encrypt = async (e, ethAmount, usdcAmount) => {
     e.preventDefault();
 
     const iface = new ethers.utils.Interface(secretpath_abi);
-    const routing_contract = 'secret1r6089slee2hnnt0pk460xww92xy8csdv5zcgfg';
-    const routing_code_hash = "76eb12576011324034f09dfa279018cf4c4f26bf993565cca5f97215723a349e";
+    const routing_contract = 'secret15xvyk8yacfqt2y6dcycgdcpc9vcl79zp97d92j';
+    const routing_code_hash = "2516b5072c613499284c9ae6fbbba8f9140f914d8da20a423a83af407afc80e1";
 
     const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
 
@@ -53,8 +53,8 @@ export default function CreateLimitOrder() {
 
     const data = JSON.stringify({
       user: myAddress,
-      eth_amount: ethAmount,
       usdc_amount: usdcAmount,
+      target_price: targetPrice
     });
 
     let publicClientAddress = "0x3879E146140b627a5C858a08e507B171D9E43139";
@@ -138,7 +138,7 @@ export default function CreateLimitOrder() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    encrypt(e, ethAmount, usdcAmount);
+    encrypt(e, usdcAmount, targetPrice);
   };
 
   return (
@@ -162,12 +162,12 @@ export default function CreateLimitOrder() {
             </div>
             <div className="mt-4">
               <label className="block text-sm font-medium leading-6 text-black">
-                ETH Amount
+                ETH Target Price
               </label>
               <textarea
-                value={ethAmount}
-                onChange={(e) => setEthAmount(e.target.value)}
-                placeholder="ETH Amount"
+                value={targetPrice}
+                onChange={(e) => setTargetPrice(e.target.value)}
+                placeholder="ETH Target Price"
                 required
                 className="mt-2 block w-full pl-2 rounded-md border border-gray-300 bg-white py-1.5 text-black shadow-sm focus:ring-2 focus:ring-indigo-500 sm:text-sm"
                 rows="4"
@@ -178,7 +178,7 @@ export default function CreateLimitOrder() {
                 type="submit"
                 className="flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
               >
-                Create Limit Order
+                Store Limit Order on Secret Network
               </button>
             </div>
           </div>

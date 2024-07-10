@@ -90,14 +90,14 @@ fn try_create_limit_order(
 
     let user = input.user; 
 
-    let eth_amount = input.eth_amount;
+    let target_price = input.target_price;
     
     let usdc_amount = input.usdc_amount;
 
     let limit_order = LimitOrder {
         user: user.clone(),
-        eth_amount: eth_amount.clone(),
         usdc_amount: usdc_amount.clone(),
+        target_price: target_price.clone(),
     };
 
     STORED_LIMIT_ORDER
@@ -139,8 +139,8 @@ fn try_limit_order_query(deps: Deps) -> StdResult<Binary> {
 
     to_binary(&ResponseRetrieveLimitOrderMsg {
         user: value.user,
-        eth_amount: value.eth_amount,
         usdc_amount: value.usdc_amount,
+        target_price: value.target_price,
     })
 }
 

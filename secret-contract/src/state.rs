@@ -15,15 +15,15 @@ pub struct State {
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
 pub struct Input {
     pub user: String, 
-    pub eth_amount: String, 
     pub usdc_amount: String, 
+    pub target_price: String, 
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
 pub struct LimitOrder {
     pub user: String, 
-    pub eth_amount: String, 
     pub usdc_amount: String, 
+    pub target_price: String, 
 }
 
 pub static STORED_LIMIT_ORDER: Keymap<bool, LimitOrder> = Keymap::new(b"stored_limit_orders");

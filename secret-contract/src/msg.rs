@@ -21,8 +21,8 @@ pub enum ExecuteMsg {
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
 pub struct LimitOrderStoreMsg {
     pub user: String, 
-    pub eth_amount: String, 
     pub usdc_amount: String, 
+    pub target_price: String, 
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
@@ -35,8 +35,8 @@ pub struct ResponseStoreLimitOrderMsg {
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
 pub struct ResponseRetrieveLimitOrderMsg {
     pub user: String, 
-    pub eth_amount: String, 
     pub usdc_amount: String, 
+    pub target_price: String, 
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]

@@ -9,7 +9,7 @@ const signer = new ethers.Wallet(process.env.PRIVATE_KEY, provider);
 
 // Smart contract ABI
 const abi = [
-  "function placeOrder(uint256 ethAmount, uint256 usdcAmount) public",
+  "function placeOrder(uint256 usdcAmount, uint256 targetPrice) public",
   "function approve(address spender, uint256 amount) external returns (bool)"
 ];
 
@@ -20,37 +20,36 @@ const contractAddress = process.env.CONTRACT_ADDRESS;
 const usdcTokenAddress = process.env.USDC_TOKEN_ADDRESS;
 
 // Order details
-const ethAmount = ethers.utils.parseEther("3100", 6); // Amount of ETH in wei
 const usdcAmount = ethers.utils.parseUnits("1", 6); // Amount of USDC in smallest units
+const targetPrice = ethers.utils.parseUnits("2900", 8); // Target price in USD with 8 decimals
 
 // Example BigNumber values
-const ethAmountHex = ethers.BigNumber.from(ethAmount);
 const usdcAmountHex = ethers.BigNumber.from(usdcAmount);
+const targetPriceHex = ethers.BigNumber.from(targetPrice);
 
-//Convert to more readable formats
-const ethAmountInEth = ethers.utils.formatEther(ethAmountHex); // Convert wei to ETH
+// Convert to more readable formats
 const usdcAmountInUsdc = ethers.utils.formatUnits(usdcAmountHex, 6); // Convert smallest units to USDC
+const targetPriceInUsd = ethers.utils.formatUnits(targetPriceHex, 8); // Convert price to USD
 
-console.log('ethAmount (in ETH):', ethAmountInEth);
-// console.log('usdcAmount (in USDC):', usdcAmountInUsdc);
+console.log('usdcAmount (in USDC):', usdcAmountInUsdc);
+console.log('targetPrice (in USD):', targetPriceInUsd);
 
+async function placeLimitOrder() {
+  // Create contract instance
+  const limitOrderContract = new ethers.Contract(contractAddress, abi, signer);
 
-// async function placeLimitOrder() {
-//   // Create contract instance
-//   const limitOrderContract = new ethers.Contract(contractAddress, abi, signer);
+  // Create USDC contract instance
+  const usdcContract = new ethers.Contract(usdcTokenAddress, abi, signer);
 
-//   // Create USDC contract instance
-//   const usdcContract = new ethers.Contract(usdcTokenAddress, abi, signer);
+  // Approve the limit order contract to spend USDC on behalf of the user
+  const approveTx = await usdcContract.approve(contractAddress, usdcAmount);
+  await approveTx.wait();
+  console.log('USDC approval transaction:', approveTx.hash);
 
-//   // Approve the limit order contract to spend USDC on behalf of the user
-//   const approveTx = await usdcContract.approve(contractAddress, usdcAmount);
-//   await approveTx.wait();
-//   console.log('USDC approval transaction:', approveTx.hash);
+  // Place the limit order
+  const placeOrderTx = await limitOrderContract.placeOrder(usdcAmount, targetPrice);
+  await placeOrderTx.wait();
+  console.log('Place order transaction:', placeOrderTx.hash);
+}
 
-//   // Place the limit order
-//   const placeOrderTx = await limitOrderContract.placeOrder(ethAmount, usdcAmount);
-//   await placeOrderTx.wait();
-//   console.log('Place order transaction:', placeOrderTx.hash);
-// }
-
-// placeLimitOrder().catch(console.error);
+placeLimitOrder().catch(console.error);
