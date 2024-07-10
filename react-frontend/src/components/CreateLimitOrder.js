@@ -18,18 +18,11 @@ import {
   base64_to_bytes,
 } from "@blake.regalia/belt";
 import secretpath_abi from "../config/abi.js";
-import Confetti from 'react-confetti';
+// import Confetti from 'react-confetti';
 
 export default function CreateLimitOrder() {
   const [usdcAmount, setUsdcAmount] = useState("");
   const [ethAmount, setEthAmount] = useState("");
-  const [transactionHash, setTransactionHash] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [showModal, setShowModal] = useState(false);
-  const [confetti, setConfetti] = useState(false);
-  const [buttonDisabled, setButtonDisabled] = useState(false); 
-
-  // const CONTRACT_ADDRESS = "";
 
   const encrypt = async (e, ethAmount, usdcAmount) => {
     e.preventDefault();
@@ -148,16 +141,11 @@ export default function CreateLimitOrder() {
     encrypt(e, ethAmount, usdcAmount);
   };
 
-  const handleCloseModal = () => {
-    setShowModal(false);
-    setConfetti(false);
-  };
-
   return (
     <div className="flex flex-col full-height justify-start items-center px-6 lg:px-8 ">
       <div className="mt-8">
-        <form onSubmit={handleSubmit} className="space-y-4" style={{ width: '360px' }}>
-          <div className="text-black text-lg font-bold mb-4">Create Limit Order</div>
+        <form onSubmit={handleSubmit} className="space-y-4" style={{ width: '420px' }}>
+          <div className="text-black text-lg font-bold mb-4">Place Limit Order on Secret Network</div>
           <div className="border-4 rounded-lg p-4">
             <div>
               <label className="block text-sm font-medium leading-6 text-black w-full">
@@ -188,7 +176,6 @@ export default function CreateLimitOrder() {
             <div className="flex justify-center mt-4">
               <button
                 type="submit"
-                disabled={buttonDisabled}
                 className="flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
               >
                 Create Limit Order
@@ -196,24 +183,7 @@ export default function CreateLimitOrder() {
             </div>
           </div>
         </form>
-        {loading && (
-          <div className="flex justify-center mt-4">
-            <p className="text-black">Creating Limit Order...</p>
-          </div>
-        )}
       </div>
-
-      {showModal && (
-        <div
-          className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50"
-          onClick={handleCloseModal}
-        >
-          <div className="bg-white p-4 rounded-lg">
-            <p>Close Modal</p>
-          </div>
-          {confetti && <Confetti />}
-        </div>
-      )}
     </div>
   );
 }

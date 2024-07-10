@@ -4,6 +4,7 @@ import CreateLimitOrder from "./components/CreateLimitOrder";
 import ABI from "./config/LimitOrder.json";
 
 import React, { useState, useEffect } from 'react';
+import ExecuteLimitOrder from "./components/ExecuteLimitOrder";
 
 function App() {
   const [abi, setAbi] = useState(null);
@@ -15,10 +16,11 @@ function App() {
 
 
   return (
-    <div className="text-3xl font-bold underline">
-      <p>My Tailwind Template</p>
+    <div className="">
+    
       <SepoliaEthPrice abi = {abi} />
       <CreateLimitOrder />
+      <ExecuteLimitOrder/>
     </div>
   );
 }

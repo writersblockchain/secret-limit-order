@@ -20,7 +20,7 @@ const contractAddress = process.env.CONTRACT_ADDRESS;
 const usdcTokenAddress = process.env.USDC_TOKEN_ADDRESS;
 
 // Order details
-const ethAmount = ethers.utils.parseEther("0.31", 6); // Amount of ETH in wei
+const ethAmount = ethers.utils.parseEther("3100", 6); // Amount of ETH in wei
 const usdcAmount = ethers.utils.parseUnits("1", 6); // Amount of USDC in smallest units
 
 // Example BigNumber values
@@ -32,25 +32,25 @@ const ethAmountInEth = ethers.utils.formatEther(ethAmountHex); // Convert wei to
 const usdcAmountInUsdc = ethers.utils.formatUnits(usdcAmountHex, 6); // Convert smallest units to USDC
 
 console.log('ethAmount (in ETH):', ethAmountInEth);
-console.log('usdcAmount (in USDC):', usdcAmountInUsdc);
+// console.log('usdcAmount (in USDC):', usdcAmountInUsdc);
 
 
-async function placeLimitOrder() {
-  // Create contract instance
-  const limitOrderContract = new ethers.Contract(contractAddress, abi, signer);
+// async function placeLimitOrder() {
+//   // Create contract instance
+//   const limitOrderContract = new ethers.Contract(contractAddress, abi, signer);
 
-  // Create USDC contract instance
-  const usdcContract = new ethers.Contract(usdcTokenAddress, abi, signer);
+//   // Create USDC contract instance
+//   const usdcContract = new ethers.Contract(usdcTokenAddress, abi, signer);
 
-  // Approve the limit order contract to spend USDC on behalf of the user
-  const approveTx = await usdcContract.approve(contractAddress, usdcAmount);
-  await approveTx.wait();
-  console.log('USDC approval transaction:', approveTx.hash);
+//   // Approve the limit order contract to spend USDC on behalf of the user
+//   const approveTx = await usdcContract.approve(contractAddress, usdcAmount);
+//   await approveTx.wait();
+//   console.log('USDC approval transaction:', approveTx.hash);
 
-  // Place the limit order
-  const placeOrderTx = await limitOrderContract.placeOrder(ethAmount, usdcAmount);
-  await placeOrderTx.wait();
-  console.log('Place order transaction:', placeOrderTx.hash);
-}
+//   // Place the limit order
+//   const placeOrderTx = await limitOrderContract.placeOrder(ethAmount, usdcAmount);
+//   await placeOrderTx.wait();
+//   console.log('Place order transaction:', placeOrderTx.hash);
+// }
 
-placeLimitOrder().catch(console.error);
+// placeLimitOrder().catch(console.error);

@@ -5,6 +5,22 @@ const SepoliaEthPrice = ({abi}) => {
 
     const [price, setPrice] = useState("");
 
+    function formatNumber(input) {
+     
+      let dividedNum = input / 100000000;
+    
+      // Round the divided number to the nearest integer
+      let roundedNum = Math.round(dividedNum);
+    
+      // Convert the rounded number to a string
+      let numStr = roundedNum.toString();
+    
+      // Insert the comma at the correct position
+      let formattedStr = numStr.slice(0, 1) + ',' + numStr.slice(1);
+    
+      return formattedStr;
+    }
+
     useEffect(() => {
         const fetchPrice = async () => {
           try {
@@ -23,7 +39,8 @@ const SepoliaEthPrice = ({abi}) => {
             const contract = new ethers.Contract(contractAddress, abi, signer);
 
     const price = await contract.getChainlinkPrice();
-    setPrice(price);
+    let formatted_price = formatNumber(price);
+    setPrice(formatted_price);
     console.log("Current price:", ethers.utils.formatUnits(price, 6));
     
     
@@ -37,7 +54,7 @@ fetchPrice();
 
   return (
     <div>
-      <h1>Current Sepolia Price: {price.toString()}  </h1>
+      <h1>Current Sepolia Price: {`$${price.toString()}.00`}  </h1>
     </div>
   );
 };
