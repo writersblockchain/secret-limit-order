@@ -42,4 +42,4 @@ async function getOrderDetails(orderIndex) {
 }
 
 // Example usage: Get details of order at index 0
-getOrderDetails(0).catch(console.error);
+getOrderDetails(3).catch(console.error);

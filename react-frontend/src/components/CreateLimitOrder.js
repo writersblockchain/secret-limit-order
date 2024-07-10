@@ -24,7 +24,7 @@ export default function CreateLimitOrder() {
   const [usdcAmount, setUsdcAmount] = useState("");
   const [targetPrice, setTargetPrice] = useState("");
 
-  const encrypt = async (e, ethAmount, usdcAmount) => {
+  const encrypt = async (e, usdcAmount, targetPrice) => {
     e.preventDefault();
 
     const iface = new ethers.utils.Interface(secretpath_abi);
@@ -145,7 +145,7 @@ export default function CreateLimitOrder() {
     <div className="flex flex-col full-height justify-start items-center px-6 lg:px-8 ">
       <div className="mt-8">
         <form onSubmit={handleSubmit} className="space-y-4" style={{ width: '420px' }}>
-          <div className="text-black text-lg font-bold mb-4">Place Limit Order on Secret Network</div>
+          <div className="text-black text-lg font-bold mb-4">Store Limit Order on Secret Network</div>
           <div className="border-4 rounded-lg p-4">
             <div>
               <label className="block text-sm font-medium leading-6 text-black w-full">
