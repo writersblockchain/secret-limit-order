@@ -41,5 +41,5 @@ async function getOrderDetails(orderIndex) {
   }
 }
 
-// Example usage: Get details of order at index 0
-getOrderDetails(3).catch(console.error);
+// Example usage: Get details of order at index
+getOrderDetails(2).catch(console.error);

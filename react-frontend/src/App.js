@@ -3,7 +3,6 @@ import CreateLimitOrder from "./components/CreateLimitOrder";
 import ABI from "./config/LimitOrder.json";
 import MyImage from "./secret-logo.png";
 import React, { useState, useEffect } from 'react';
-import ExecuteLimitOrder from "./components/ExecuteLimitOrder";
 import AnimatedText from './components/AnimatedText'; 
 import QueryLimitOrder from "./components/QueryLimitOrder";
 
@@ -18,7 +17,7 @@ function App() {
 
   return (
     <div className="bg-brand-tan text-brand-orange min-h-screen flex flex-col items-center">
-      <p className="text-lg font-bold mt-4">Confidential Limit Orders on Secret Network</p>
+      <p className="text-xl font-bold mt-4">Confidential Limit Orders on Secret Network</p>
       <h6 className="text-xs hover:underline text-brand-blue">
         <a
           href="https://docs.scrt.network/secret-network-documentation/confidential-computing-layer/ethereum-evm-developer-toolkit/usecases/"
@@ -40,7 +39,7 @@ function App() {
       <img
         src={MyImage}
         alt="Descriptive Text"
-        className="w-18 h-12 mt-8"
+        className="w-18 h-12 mt-8 mb-4"
       />
     </div>
   );

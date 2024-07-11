@@ -35,7 +35,7 @@ const SepoliaEthPrice = ({abi}) => {
             await window.ethereum.request({ method: 'eth_requestAccounts' });
             const provider = new ethers.providers.Web3Provider(window.ethereum);
             const signer = provider.getSigner();
-            const contractAddress = "0xD16A6ad63a7c63F933afFAF2b62D153B580fE9Da";
+            const contractAddress = "0xcF678cf453fCE9Fd8C523812217cAf1EB11Babe2";
             const contract = new ethers.Contract(contractAddress, abi, signer);
 
     const price = await contract.getChainlinkPrice();
