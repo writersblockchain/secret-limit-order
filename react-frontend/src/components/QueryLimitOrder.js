@@ -53,8 +53,17 @@ function QueryLimitOrder() {
           <label className="block text-sm font-medium leading-6">Target Price:</label>
           <p className="mt-1 text-brand-blue">${limitOrder.targetPrice} ETH</p>
         </div>
+        <div className="flex justify-center mt-4">
+              <button
+                type="submit"
+                className="flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-brand-orange hover:bg-brand-blue focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              >
+                Execute Limit Order on EVM
+              </button>
+            </div>
       </div>
     </div>
+
   );
 }
 
