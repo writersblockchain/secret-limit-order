@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
 import {
   arrayify,
@@ -18,11 +18,21 @@ import {
   base64_to_bytes,
 } from "@blake.regalia/belt";
 import secretpath_abi from "../config/abi.js";
-// import Confetti from 'react-confetti';
+import SuccessModal from './SuccessModal';
 
-export default function CreateLimitOrder() {
+export default function CreateLimitOrder({ abi }) {
   const [usdcAmount, setUsdcAmount] = useState("");
   const [targetPrice, setTargetPrice] = useState("");
+  const [price, setPrice] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleTransactionSuccess = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
 
   const encrypt = async (e, usdcAmount, targetPrice) => {
     e.preventDefault();
@@ -131,6 +141,7 @@ export default function CreateLimitOrder() {
     try {
       const txHash = await provider.send("eth_sendTransaction", [tx_params]);
       console.log(`Transaction Hash: ${txHash}`);
+      handleTransactionSuccess(); // Call the success handler after successful transaction
     } catch (error) {
       console.error("Error submitting transaction:", error);
     }
@@ -141,15 +152,62 @@ export default function CreateLimitOrder() {
     encrypt(e, usdcAmount, targetPrice);
   };
 
+  //get current Sepolia price from Chainlink oracle
+  function formatNumber(input) {
+   
+    let dividedNum = input / 100000000;
+  
+    // Round the divided number to the nearest integer
+    let roundedNum = Math.round(dividedNum);
+  
+    // Convert the rounded number to a string
+    let numStr = roundedNum.toString();
+  
+    // Insert the comma at the correct position
+    let formattedStr = numStr.slice(0, 1) + ',' + numStr.slice(1);
+  
+    return formattedStr;
+  }
+
+  useEffect(() => {
+      const fetchPrice = async () => {
+        try {
+          if (!window.ethereum) {
+            console.error('MetaMask is not installed');
+            return;
+          }
+          await (window).ethereum.request({
+            method: 'wallet_switchEthereumChain',
+            params: [{ chainId: '0xAA36A7' }], // chainId must be in hexadecimal numbers
+        });
+          await window.ethereum.request({ method: 'eth_requestAccounts' });
+          const provider = new ethers.providers.Web3Provider(window.ethereum);
+          const signer = provider.getSigner();
+          const contractAddress = "0xD16A6ad63a7c63F933afFAF2b62D153B580fE9Da";
+          const contract = new ethers.Contract(contractAddress, abi, signer);
+
+  const price = await contract.getChainlinkPrice();
+  let formatted_price = formatNumber(price);
+  setPrice(formatted_price);
+  console.log("Current price:", ethers.utils.formatUnits(price, 6));
+  
+  
+}
+catch (error) {
+  console.error('Error fetching: ', error);
+}
+}
+fetchPrice();
+}, [abi]);
+
   return (
-    <div className="flex flex-col full-height justify-start items-center px-6 lg:px-8 ">
-      <div className="mt-8">
-        <form onSubmit={handleSubmit} className="space-y-4" style={{ width: '420px' }}>
-          <div className="text-black text-lg font-bold mb-4">Store Limit Order on Secret Network</div>
-          <div className="border-4 rounded-lg p-4">
+    <div className="flex flex-col full-height justify-start items-center px-6 lg:px-8 text-brand-orange ">
+      <div className="mt-4">
+        <form onSubmit={handleSubmit} className="space-y-4" style={{ width: '460px' }}>
+          <div className="border-4 border-brand-orange rounded-lg p-4">
             <div>
-              <label className="block text-sm font-medium leading-6 text-black w-full">
-                USDC Amount
+              <label className="block text-sm font-medium leading-6  w-full">
+                USDC Amount (amount of USDC you want to swap for ETH)
               </label>
               <input
                 type="text"
@@ -157,26 +215,26 @@ export default function CreateLimitOrder() {
                 onChange={(e) => setUsdcAmount(e.target.value)}
                 placeholder="USDC Amount"
                 required
-                className="mt-2 block w-full pl-2 rounded-md border border-gray-300 bg-white py-1.5 text-black shadow-sm focus:ring-2 focus:ring-indigo-500 sm:text-sm"
+                className="mt-2 block w-full pl-2 text-brand-blue rounded-md border border-brand-orange bg-brand-tan py-1.5  shadow-sm focus:ring-2 focus:ring-brand-blue sm:text-sm"
               />
             </div>
             <div className="mt-4">
-              <label className="block text-sm font-medium leading-6 text-black">
-                ETH Target Price
+              <label className="block text-sm font-medium leading-6">
+                ETH Target Price (Current Sepolia ETH Price: {`$${price.toString()}.00`})
               </label>
               <textarea
                 value={targetPrice}
                 onChange={(e) => setTargetPrice(e.target.value)}
                 placeholder="ETH Target Price"
                 required
-                className="mt-2 block w-full pl-2 rounded-md border border-gray-300 bg-white py-1.5 text-black shadow-sm focus:ring-2 focus:ring-indigo-500 sm:text-sm"
+                className="mt-2 block w-full pl-2 text-brand-blue rounded-md border border-brand-orange bg-brand-tan py-1.5  shadow-sm focus:ring-2 focus:ring-brand-blue sm:text-sm"
                 rows="4"
               ></textarea>
             </div>
             <div className="flex justify-center mt-4">
               <button
                 type="submit"
-                className="flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                className="flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-brand-orange hover:bg-brand-blue focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
               >
                 Store Limit Order on Secret Network
               </button>
@@ -184,6 +242,7 @@ export default function CreateLimitOrder() {
           </div>
         </form>
       </div>
+      <SuccessModal isOpen={isModalOpen} onClose={handleCloseModal} />
     </div>
   );
 }

@@ -53,8 +53,8 @@ fetchPrice();
 }, [abi]);
 
   return (
-    <div>
-      <h1>Current Sepolia Price: {`$${price.toString()}.00`}  </h1>
+    <div className=''>
+      <h1> Sepolia ETH Price: {`$${price.toString()}.00`}  </h1>
     </div>
   );
 };
