@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { SecretNetworkClient } from 'secretjs';
 import { ethers } from 'ethers';
 
-function QueryLimitOrder() {
+function QueryLimitOrder({ onQueryLoad }) {
   const [limitOrder, setLimitOrder] = useState({
     user: '',
     usdcAmount: '',
@@ -38,13 +38,15 @@ function QueryLimitOrder() {
         });
 
         console.log(fetchedLimitOrder);
+        onQueryLoad();
       } catch (error) {
         console.error('Error fetching limit order:', error);
       }
     };
 
-    fetchLimitOrder();
-  }, []);
+    const queryTimeout = setTimeout(fetchLimitOrder, 20000); // 20 seconds delay
+    return () => clearTimeout(queryTimeout);
+  }, [onQueryLoad]);
 
   const executeLimitOrder = async () => {
     if (!window.ethereum) {
@@ -87,7 +89,7 @@ function QueryLimitOrder() {
       await executeOrderTx.wait();
       console.log('Execute order transaction:', executeOrderTx.hash);
 
-      alert('Limit order executed successfully!');
+      alert('Limit order executed successfully! See tx here: ' + executeOrderTx.hash);
     } catch (error) {
       console.error('Error executing limit order:', error);
       alert('Failed to execute limit order!');
