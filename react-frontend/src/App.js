@@ -1,32 +1,35 @@
-import "./App.css";
-import CreateLimitOrder from "./components/CreateLimitOrder";
-import ABI from "./config/LimitOrder.json";
-import MyImage from "./secret-logo.png";
 import React, { useState, useEffect } from 'react';
+import './App.css';
+import CreateLimitOrder from './components/CreateLimitOrder';
+import QueryLimitOrder from './components/QueryLimitOrder';
+import ABI from './config/LimitOrder.json';
+import MyImage from './secret-logo.png';
 import AnimatedText from './components/AnimatedText';
-import QueryLimitOrder from "./components/QueryLimitOrder";
 import { ClipLoader } from 'react-spinners';
+import SuccessModal from './components/SuccessModal';
 
 function App() {
   const [abi, setAbi] = useState(null);
-  const [isOrderExecuted, setIsOrderExecuted] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isQueryLoaded, setIsQueryLoaded] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [transactionHash, setTransactionHash] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     setAbi(ABI.abi);
   }, []);
 
-  const handleTransactionSuccess = () => {
-    setIsLoading(true);
+  const handleTransactionSuccess = (txHash) => {
+    setTransactionHash(txHash);
+    setLoading(true);
+    setIsModalOpen(true);
     setTimeout(() => {
-      setIsLoading(false);
-      setIsOrderExecuted(true);
-    }, 20000); //  delay for loading message
+      setLoading(false);
+      setIsModalOpen(false);
+    }, 20000); // 20 seconds
   };
 
-  const handleQueryLoad = () => {
-    setIsQueryLoaded(true);
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
   };
 
   return (
@@ -42,25 +45,30 @@ function App() {
         </a>
       </h6>
       <div className="flex flex-col items-start mt-4">
-        <a href="https://faucet.circle.com/"
+        <a
+          href="https://faucet.circle.com/"
           target="_blank"
           rel="noopener noreferrer"
-          className="hover:underline">1. Get testnet Sepolia USDC from faucet</a>
+          className="hover:underline"
+        >
+          1. Get testnet Sepolia USDC from faucet
+        </a>
         <AnimatedText />
       </div>
-      <CreateLimitOrder abi={abi} onTransactionSuccess={handleTransactionSuccess} />
-      {isLoading && (
-          <div className="flex justify-center mt-4">
-            <ClipLoader size={50} color={"#123abc"} />
-          </div>
-        )}
-      {isOrderExecuted && !isQueryLoaded && <p className="text-xl mt-4">Preparing to fetch order details...</p>}
-      {isOrderExecuted && !isLoading && <QueryLimitOrder onQueryLoad={handleQueryLoad} />}
+      <CreateLimitOrder abi={abi} handleTransactionSuccess={handleTransactionSuccess} />
+      {loading ? (
+        <div className="flex justify-center mt-4">
+          <ClipLoader size={50} color={"#123abc"} />
+        </div>
+      ) : (
+        transactionHash && <QueryLimitOrder />
+      )}
       <img
         src={MyImage}
         alt="Descriptive Text"
         className="w-18 h-12 mt-8 mb-4"
       />
+      <SuccessModal isOpen={isModalOpen} onClose={handleCloseModal} />
     </div>
   );
 }

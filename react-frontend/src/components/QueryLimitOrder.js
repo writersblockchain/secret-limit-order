@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { SecretNetworkClient } from 'secretjs';
 import { ethers } from 'ethers';
 
-function QueryLimitOrder({ onQueryLoad }) {
+function QueryLimitOrder() {
   const [limitOrder, setLimitOrder] = useState({
     user: '',
     usdcAmount: '',
@@ -38,15 +38,13 @@ function QueryLimitOrder({ onQueryLoad }) {
         });
 
         console.log(fetchedLimitOrder);
-        onQueryLoad();
+       
       } catch (error) {
         console.error('Error fetching limit order:', error);
       }
     };
-
-    const queryTimeout = setTimeout(fetchLimitOrder, 20000); // 20 seconds delay
-    return () => clearTimeout(queryTimeout);
-  }, [onQueryLoad]);
+    fetchLimitOrder();
+  }, []);
 
   const executeLimitOrder = async () => {
     if (!window.ethereum) {
@@ -99,7 +97,7 @@ function QueryLimitOrder({ onQueryLoad }) {
   return (
     <div className="flex flex-col items-center px-6 lg:px-8 text-brand-orange mt-8">
       <div className="border-4 border-brand-orange rounded-lg p-4 " style={{ width: '460px' }}>
-        <h2 className="text-lg font-bold mb-4">Confidential Limit Order Details</h2>
+        <h2 className="text-lg font-bold mb-4">Existing Confidential Limit Orders</h2>
         <div className="mb-2">
           <label className="block text-sm font-medium leading-6">User:</label>
           <p className="mt-1 text-brand-blue">{limitOrder.user}</p>
